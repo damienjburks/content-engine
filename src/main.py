@@ -126,8 +126,10 @@ class PostPublisher:
 
                 elif platform == "hashnode":
                     # Check if Hashnode credentials are available
-                    if os.environ.get("HASHNODE_API_KEY") and os.environ.get(
-                        "HASHNODE_USERNAME"
+                    if (
+                        os.environ.get("HASHNODE_API_KEY")
+                        and os.environ.get("HASHNODE_USERNAME")
+                        and os.environ.get("HASHNODE_PUBLICATION_ID")
                     ):
                         clients["hashnode"] = HashnodeClient()
                         self.logger.info("Hashnode client initialized successfully")
@@ -137,6 +139,8 @@ class PostPublisher:
                             missing_vars.append("HASHNODE_API_KEY")
                         if not os.environ.get("HASHNODE_USERNAME"):
                             missing_vars.append("HASHNODE_USERNAME")
+                        if not os.environ.get("HASHNODE_PUBLICATION_ID"):
+                            missing_vars.append("HASHNODE_PUBLICATION_ID")
                         self.error_handler.log_authentication_error(
                             "hashnode",
                             f"Missing environment variables: {', '.join(missing_vars)}",

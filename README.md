@@ -70,6 +70,7 @@ export DEVTO_API_KEY="your_devto_api_key_here"
 ```bash
 export HASHNODE_API_KEY="your_hashnode_api_key_here"
 export HASHNODE_USERNAME="your_hashnode_username"
+export HASHNODE_PUBLICATION_ID="your_hashnode_publication_id"
 ```
 
 ### Optional Configuration

@@ -27,6 +27,7 @@ logging.basicConfig(level=logging.INFO)
 HASHNODE_API_URL = "https://gql.hashnode.com"
 HASHNODE_API_KEY = environ.get("HASHNODE_API_KEY")
 HASHNODE_USERNAME = environ.get("HASHNODE_USERNAME")
+HASHNODE_PUBLICATION_ID = environ.get("HASHNODE_PUBLICATION_ID")
 
 
 class HashnodeClient(PlatformClient):
@@ -57,6 +58,15 @@ class HashnodeClient(PlatformClient):
             )
             raise AuthenticationError(
                 "HASHNODE_USERNAME environment variable is required",
+                platform="hashnode",
+            )
+
+        if not HASHNODE_PUBLICATION_ID:
+            self.error_handler.log_authentication_error(
+                "hashnode", "HASHNODE_PUBLICATION_ID environment variable is not set"
+            )
+            raise AuthenticationError(
+                "HASHNODE_PUBLICATION_ID environment variable is required",
                 platform="hashnode",
             )
 
@@ -208,10 +218,7 @@ class HashnodeClient(PlatformClient):
             tag_objects = []
             for tag in tags[:5]:  # Hashnode allows max 5 tags
                 tag_slug = tag.lower().replace(" ", "-").replace("_", "-")
-                tag_objects.append({
-                    "name": tag,
-                    "slug": tag_slug
-                })
+                tag_objects.append({"name": tag, "slug": tag_slug})
 
             # GraphQL mutation for publishing
             publish_mutation = gql(
@@ -236,6 +243,7 @@ class HashnodeClient(PlatformClient):
                 "title": title,
                 "contentMarkdown": body_markdown,
                 "tags": tag_objects,
+                "publicationId": HASHNODE_PUBLICATION_ID,
                 "publishedAt": (
                     None if not published else None
                 ),  # Let Hashnode set the time
@@ -347,10 +355,7 @@ class HashnodeClient(PlatformClient):
             tag_objects = []
             for tag in tags[:5]:  # Hashnode allows max 5 tags
                 tag_slug = tag.lower().replace(" ", "-").replace("_", "-")
-                tag_objects.append({
-                    "name": tag,
-                    "slug": tag_slug
-                })
+                tag_objects.append({"name": tag, "slug": tag_slug})
 
             # GraphQL mutation for updating
             update_mutation = gql(
