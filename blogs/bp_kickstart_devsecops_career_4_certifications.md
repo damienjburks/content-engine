@@ -15,7 +15,7 @@ In this blog post, I'll be unpacking the four certifications that I firmly belie
 
 ## 1. CompTIA Security+
 
-![CompTIA Security+ Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/logosecurityplus.svg align="center")
+![CompTIA Security+ Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/logosecurityplus.svg align="center")
 
 Starting with what I consider the bedrock of cybersecurity, the CompTIA Security+ certification is your gateway into understanding the intricate world of cyber security, which is indispensable in the DevSecOps realm.
 
@@ -27,7 +27,7 @@ The CompTIA Security+ is an entry-level certification but don't underestimate it
 
 This certification dives deeply into general security concepts and teaches you about different cyber threats and how to mitigate them. In addition, it covers security operations and architecture and delves into vulnerability management techniques and gives insights into security program management.
 
-![Skills You'll Learn](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/sec+_skills_to_learn.png align="center")
+![Skills You'll Learn](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/sec+_skills_to_learn.png align="center")
 
 #### Certification Details
 
@@ -41,7 +41,7 @@ This certification dives deeply into general security concepts and teaches you a
 
 ## 2. CompTIA Linux+
 
-![CompTIA Linux+ Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/logolinuxplus.svg align="center")
+![CompTIA Linux+ Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/logolinuxplus.svg align="center")
 
 For those looking to solidify their command over Linux distributions, which is a critical skill for any aspiring DevSecOps professional, the CompTIA Linux+ is a non-negotiable!
 
@@ -53,7 +53,7 @@ Linux powers a significant portion of the servers running in data centers worldw
 
 With this certification, you should expect to get hands-on with system management, security practices for permissions and authentications, and have a foray into scripting, containers, and automation. This certificate emphasizes troubleshooting, which is a non-negotiable skill in a real-world DevSecOps environment.
 
-![Linux+ Skills to Learn](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/linux+_skills_to_learn.png align="center")
+![Linux+ Skills to Learn](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/linux+_skills_to_learn.png align="center")
 
 #### Certification Details
 
@@ -67,7 +67,7 @@ With this certification, you should expect to get hands-on with system managemen
 
 ## 3. AWS Certified Developer - Associate
 
-![AWS Certified Developer - Associate Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/AWS-Certified-Developer-Associate_badge.png align="center")
+![AWS Certified Developer - Associate Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/AWS-Certified-Developer-Associate_badge.png align="center")
 
 Considering the ubiquity of AWS in cloud services, the AWS Certified Developer - Associate certification is a goldmine for those looking to demonstrate their proficiency in developing and managing AWS-based applications for real-world DevSecOps use cases.
 
@@ -79,7 +79,7 @@ This certification provides a detailed understanding of AWS services, essential 
 
 For this certification, you should expect to learn how to deploy applications and infrastructure using AWS CloudFormation, master AWS CI/CD services (CodeCommit, CodeDeploy, CodePipeline, etc.), and get comfortable with AWS coding standards for security. To learn more about this exam and all that it entails, you can take a look at the exam guide here: [Developer Associate Exam Guide](https://d1.awsstatic.com/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Exam-Guide.pdf)
 
-![Exam Guide](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/aws_cda_exam_guide.png align="center")
+![Exam Guide](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/aws_cda_exam_guide.png align="center")
 
 #### Certification Details
 
@@ -92,7 +92,7 @@ For this certification, you should expect to learn how to deploy applications an
 
 ## 4. Certified Kubernetes Administrator (CKA)
 
-![Certified Kubernetes Administrator Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/logo_cka.png align="center")
+![Certified Kubernetes Administrator Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/logo_cka.png align="center")
 
 With containerization being a critical part of DevSecOps, understanding Kubernetes is non-negotiable. The Certified Kubernetes Administrator certification is designed to ensure you can handle the challenges of managing Kubernetes environments.
 
@@ -104,7 +104,7 @@ Kubernetes is at the forefront of container orchestration. Like the CompTIA Linu
 
 From basic installation and configuration to managing cluster operations and understanding Kubernetes networking, this certification covers it all. It's an intensive dive into what makes Kubernetes tick and how to keep it running smoothly.
 
-![CKA Domains](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/kickstart_devsecops_career_4_certifications/cka_domains.png align="center")
+![CKA Domains](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/kickstart_devsecops_career_4_certifications/cka_domains.png align="center")
 
 #### Certification Details
 

@@ -15,19 +15,19 @@ In this article, I will share my journey on how to successfully pass the AWS Cer
 
 ## Why It's Essential to Start with the AWS Certified Solutions Architect Associate
 
-![Solutions Architect Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/mastering_the_aws_scs/solutions_architect_asc_logo.png align="center")
+![Solutions Architect Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/mastering_the_aws_scs/solutions_architect_asc_logo.png align="center")
 
 First things first, if you’re aiming for the AWS Security Specialty certification, I highly recommend having the AWS Certified Solutions Architect Associate (SAA) under your belt. The foundational knowledge you gain from the Solutions Architect Associate is crucial. It not only prepares you with the basic principles of AWS architecture, but it also makes the uphill climb of the Security Specialty exam smoother.
 
 ## Understanding the AWS Security Specialty Exam
 
-![Logo for Security Specialty](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/mastering_the_aws_scs/security_specialty_logo.png align="center")
+![Logo for Security Specialty](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/mastering_the_aws_scs/security_specialty_logo.png align="center")
 
 According to AWS, the Security Specialty exam validates your ability to design and implement security solutions on AWS. It checks your understanding in specialized data classifications, data protections, and the architectures for implementing security controls. I've highlighted some of the key points about the exam below.
 
 ### Key Points About the Exam
 
-![Exam Overview Snippet](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/mastering_the_aws_scs/exam_overview.png align="center")
+![Exam Overview Snippet](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/mastering_the_aws_scs/exam_overview.png align="center")
 
 - **Type of Questions:** 65 questions, both multiple choice and multiple response.
 - **Duration:** 170 minutes, nearly three hours to clear the hurdles.
@@ -48,23 +48,23 @@ Let’s dive into some top resources that helped me ace this exam. There are a t
 
 ### Stephane Maarek's Ultimate AWS Certified Security Specialty Course
 
-[![Placeholder for Stephane Maarek's course banner](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/mastering_the_aws_scs/stephanes_course_image.jpeg align="center")](https://www.udemy.com/course/ultimate-aws-certified-security-specialty/)
+[![Placeholder for Stephane Maarek's course banner](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/mastering_the_aws_scs/stephanes_course_image.jpeg align="center")](https://www.udemy.com/course/ultimate-aws-certified-security-specialty/)
 
 This is one of the highest-rated courses out there for the Security Specialty exam. Stephane Maarek, known for his ability to demystify complex AWS concepts succinctly, has prepared around 16 hours of on-demand videos which are hosted on Udemy. The course also includes hands-on labs, essential for practical understanding. However, there is no sandbox environment provided, so you'll need to make sure you request your own AWS account. Using some AWS services during the course in your own account might cost a bit, but it’s a worthwhile investment for your preparation.
 
 ### AWS Security Specialty Focus Labs by Whizlabs
 
-[![Whizlabs SCS Labs](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/mastering_the_aws_scs/whizlabs_labs.png align="center")](https://www.whizlabs.com/aws-certified-security-specialty/)
+[![Whizlabs SCS Labs](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/mastering_the_aws_scs/whizlabs_labs.png align="center")](https://www.whizlabs.com/aws-certified-security-specialty/)
 
 Hands-on experience is **crucial**, and that’s why I also recommend the AWS Security Specialty Focus Labs offered by Whizlabs. With around 54 labs tailored to various exam domains like Threat Detection and Identity Access Management (IAM), these labs are **SUPER invaluable**. Unfortunately, these labs are not free. These labs are priced at $65.95, so be sure to keep an eye out for sales to grab a good deal!
 
 ### TutorialsDojo’s Practice Exams and Cheat Sheets
 
-[![TutorialsDojo Practice Exams](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/mastering_the_aws_scs/practice_exams.jpeg align="center")](https://portal.tutorialsdojo.com/courses/aws-certified-security-specialty-practice-exams-scs-c02/)
+[![TutorialsDojo Practice Exams](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/mastering_the_aws_scs/practice_exams.jpeg align="center")](https://portal.tutorialsdojo.com/courses/aws-certified-security-specialty-practice-exams-scs-c02/)
 
 TutorialsDojo is another excellent resource that I constantly use for AWS exams. Their practice exams are known to mirror the actual exam’s difficulty. In most cases, they are even harder than the actual exam. Prior to sitting for the exam, I highly recommend you are consistently scoring about an 80%. Consistently scoring above 80% on these can boost your confidence significantly prior to sitting for the exam, and the odds of you passing it on the first try are pretty high.
 
-[![Tutorials Dojo Cheat Sheets](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/mastering_the_aws_scs/td_cheat_sheets.png align="center")](https://tutorialsdojo.com/aws-cheat-sheets/)
+[![Tutorials Dojo Cheat Sheets](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/mastering_the_aws_scs/td_cheat_sheets.png align="center")](https://tutorialsdojo.com/aws-cheat-sheets/)
 
 Furthermore, their cheat sheets also provide detailed notes on services that you'll come across in the exam, which I highly recommend you leverage as much as possible.
 

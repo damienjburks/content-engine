@@ -207,7 +207,11 @@ class HashnodeClient(PlatformClient):
             # Prepare tags for Hashnode (convert to tag objects)
             tag_objects = []
             for tag in tags[:5]:  # Hashnode allows max 5 tags
-                tag_objects.append({"name": tag.lower().replace(" ", "-")})
+                tag_slug = tag.lower().replace(" ", "-").replace("_", "-")
+                tag_objects.append({
+                    "name": tag,
+                    "slug": tag_slug
+                })
 
             # GraphQL mutation for publishing
             publish_mutation = gql(
@@ -342,7 +346,11 @@ class HashnodeClient(PlatformClient):
             # Prepare tags for Hashnode
             tag_objects = []
             for tag in tags[:5]:  # Hashnode allows max 5 tags
-                tag_objects.append({"name": tag.lower().replace(" ", "-")})
+                tag_slug = tag.lower().replace(" ", "-").replace("_", "-")
+                tag_objects.append({
+                    "name": tag,
+                    "slug": tag_slug
+                })
 
             # GraphQL mutation for updating
             update_mutation = gql(

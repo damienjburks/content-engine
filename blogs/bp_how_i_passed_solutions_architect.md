@@ -13,13 +13,13 @@ enableToc: true
 
 In this article, I will share my journey on how to successfully pass the AWS Certified Solutions Architect - Associate (SAA) exam. My hope is that by sharing my experience, resources, study plan, and some crucial tips, I can help you navigate your way to acing this challenging certification exam.
 
-![My Certification](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/aws_saa_certificate.jpg align="center")
+![My Certification](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/aws_saa_certificate.jpg align="center")
 
 ## Prerequisites
 
 Before we get into the specifics of the exam, I highly recommend considering the AWS Certified Cloud Practitioner exam first. This foundational certification helps you understand the basic concepts of various AWS services.
 
-![AWS Certified Cloud Practitioner](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/ccp_badge.png align="center")
+![AWS Certified Cloud Practitioner](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/ccp_badge.png align="center")
 
 Although it's not a mandatory requirement, familiarity with basic programming or coding concepts can be advantageous.
 
@@ -29,7 +29,7 @@ Although it's not a mandatory requirement, familiarity with basic programming or
 
 The AWS Certified Solutions Architect Associate exam showcases knowledge and skills in AWS technology across a wide range of services. The focus is on designing cost and performance-optimized solutions, demonstrating a strong understanding of the AWS Well-Architected Framework and other AWS documentation.
 
-![AWS Well-Architected Framework](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/well_architected_framework.png align="center")
+![AWS Well-Architected Framework](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/well_architected_framework.png align="center")
 
 This exam is ideal for those with:
 
@@ -46,7 +46,7 @@ The certification helps you create robust, fault-tolerant, and scalable solution
 - **Format:** 65 questions (multiple choice or multiple response)
 - **Testing Options:** AWS-approved testing center or online
 
-![Exam Information](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/exam_cost_info.png align="center")
+![Exam Information](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/exam_cost_info.png align="center")
 
 ### Exam Guide
 
@@ -67,7 +67,7 @@ Choosing the right study materials can make a significant difference in your exa
 
 ### 1. **Stephane Maarek's Ultimate AWS Certified Solutions Architect Associate Course**
 
-![Stephane Maarek's Course](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/stephane's_course_saa.jpeg align="center")
+![Stephane Maarek's Course](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/stephane's_course_saa.jpeg align="center")
 
 - **Platform:** [Udemy](https://www.udemy.com/course/aws-certified-solutions-architect-associate-saa-c03/)
 - **Overview:** This comprehensive course includes over 340 lectures, totaling approximately 27 hours long. Stephane Maarek does an excellent job explaining each service in detail, providing clear examples that are easy to remember. He explicitly highlights which topics will appear on the exam and offers hands-on lectures to reinforce the material.
@@ -76,14 +76,14 @@ Choosing the right study materials can make a significant difference in your exa
 
 ### 2. **Jon Bonso's Practice Exams**
 
-![Jon Bonso's Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/tutorials_dojo_cheat_sheets.png align="center")
+![Jon Bonso's Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/tutorials_dojo_cheat_sheets.png align="center")
 
 - **Platform:** [TutorialsDojo Website - Practice Exams](https://portal.tutorialsdojo.com/courses/aws-certified-solutions-architect-associate-practice-exams)
 - **Overview:** These practice exams are tough but closely mimic the complexity and depth of the actual exam questions. Initially, I scored between 40s and 60s, which was incredibly demotivating. However, after thoroughly reviewing each question and consulting the [TutorialsDojo AWS Cheat Sheets](https://tutorialsdojo.com/aws-cheat-sheets/), my scores improved significantly.
 
 ### 3. **Whizlabs AWS Labs**
 
-![Whizlabs Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/whizlabs_logo.svg align="center")
+![Whizlabs Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/whizlabs_logo.svg align="center")
 
 - **Platform:** [Whizlabs](https://www.whizlabs.com/)
 - **Overview:** For those who prefer a more simulated lab environment, Whizlabs offers a token-based system to access their labs. This can be a bit pricey, but it's a worthwhile investment for hands-on learning. If you're willing to invest in it, it's well worth it! You can find more information about their labs here: [Whizlabs AWS Solutions Architect - Associate](https://www.whizlabs.com/aws-solutions-architect-associate/)
@@ -129,6 +129,6 @@ Thank you for reading, and best of luck if you're pursuing this certification!
 
 _**Disclaimer:** This blog post reflects my personal experiences and opinions. This blogs original content is based off of the following video:_
 
-[![Video](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/how_i_passed_aws_saa/vid_thumbnail.svg align="center")](https://www.youtube.com/watch?v=o9QPhxInQFQ)
+[![Video](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/how_i_passed_aws_saa/vid_thumbnail.svg align="center")](https://www.youtube.com/watch?v=o9QPhxInQFQ)
 
 _All images located in the blog post have been sourced from different places. Click on the image to get redirected to the original source._

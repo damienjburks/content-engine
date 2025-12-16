@@ -36,23 +36,23 @@ When selecting a project to contribute to, it's essential to gauge its activity 
 
 ### Active Project Example: Open Policy Agent (OPA)
 
-![OPA Policy Agent Project Ooverview](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/lessons_learned_open_source/opa_release_commits.webp align="center")
+![OPA Policy Agent Project Ooverview](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/lessons_learned_open_source/opa_release_commits.webp align="center")
 
 Open Policy Agent (OPA) serves as a prime example of an active project with a vibrant community and robust development activity. The project's GitHub repository showcases frequent commits and releases, indicative of ongoing maintenance and engagement from contributors.
 
-![OPA Good Commit History](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/lessons_learned_open_source/opa_good_commit_history.webp align="center")
+![OPA Good Commit History](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/lessons_learned_open_source/opa_good_commit_history.webp align="center")
 
 ### Dead Project Example: PACU
 
-![Insert Figure 3: Pacu Commits and Release History](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/lessons_learned_open_source/pacu_bad_project.webp align="center")
+![Insert Figure 3: Pacu Commits and Release History](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/lessons_learned_open_source/pacu_bad_project.webp align="center")
 
 On the other hand, projects with minimal recent activity may indicate a stagnant or "dead" status, making them less conducive to new contributions. Pacu, for instance, exhibits signs of stagnation with infrequent releases and sparse commit history.
 
-![Insert Figure 4: Commit History of Pacu](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/lessons_learned_open_source/pacu_commit_history.webp align="center")
+![Insert Figure 4: Commit History of Pacu](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/lessons_learned_open_source/pacu_commit_history.webp align="center")
 
 In such cases, it's advisable to seek out more active projects to maximize your contribution potential.
 
-![Insert Figure 5: Filtered 'Good First Issues'](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/lessons_learned_open_source/opa_good_first_issue.webp align="center")
+![Insert Figure 5: Filtered 'Good First Issues'](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/lessons_learned_open_source/opa_good_first_issue.webp align="center")
 
 ## Step 4: Read Contributing Guidelines
 
@@ -72,7 +72,7 @@ Documentation, for instance, plays a crucial role in the success of open-source 
 
 Remember, every contribution, big or small, makes a difference in advancing open-source projects and enriching the broader developer community.
 
-![OPA Release Annoucement Example](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/lessons_learned_open_source/opa_release_v0.40.0.webp align="center")
+![OPA Release Annoucement Example](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/lessons_learned_open_source/opa_release_v0.40.0.webp align="center")
 
 ## Conclusion
 

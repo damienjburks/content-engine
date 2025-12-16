@@ -19,7 +19,7 @@ So, on to answer the key question of this entire blog post. _**Is the CCP truly 
 
 In my opinion, the worth of pursuing the AWS CCP certification hinges on your aspirations and existing cloud knowledge. If you aim to specialize in AWS and pursue associate-level certifications, then the CCP is a definite yes. However, if you seek to become a cloud generalist, CompTIA's Cloud+ certification may be a better fit as it covers fundamental cloud concepts applicable across various platforms.
 
-![CCP Badge](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/is_aws_ccp_worth_it/ccp_badge.png align="center")
+![CCP Badge](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/is_aws_ccp_worth_it/ccp_badge.png align="center")
 
 ## My Experience
 
@@ -33,11 +33,11 @@ For those interested, based on my experience and research, I have some study mat
 
 1. [**ACloudGuru's AWS CCP CLF-C02 Course**](https://www.pluralsight.com/cloud-guru/courses/aws-certified-cloud-practitioner-clf-c02): The course provides comprehensive coverage of all knowledge areas outlined in the exam guide, encompassing the four domains: Cloud Concepts, Security and Compliance, Cloud Technology and Services, and Billing, Pricing, and Support.
 
-    ![CCP Course](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/is_aws_ccp_worth_it/aws_ccp_course.png align="center")
+    ![CCP Course](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/is_aws_ccp_worth_it/aws_ccp_course.png align="center")
 
 1. [**TutorialsDojo Practice Exams**](https://explore.skillbuilder.aws/learn/course/external/view/elearning/14637/aws-certified-cloud-practitioner-official-practice-exam-clf-c02-english): This is the AWS official practice exam for the CCP! I think this is sufficient enough for you to test your knowledge. No need for third-party curatied exams.
 
-    ![Practice Exams - TutorialDojo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/is_aws_ccp_worth_it/td_ccp_image.jpeg align="center")
+    ![Practice Exams - TutorialDojo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/is_aws_ccp_worth_it/td_ccp_image.jpeg align="center")
 
 ACloudGuru has consistently proven to be a valuable resource for AWS exams and labs. The recommended course typically takes around a week to complete, offering approximately 22 hours of content with hands-on labs to familiarize you with the AWS console, especially billing services.
 

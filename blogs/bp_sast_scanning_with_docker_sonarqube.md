@@ -19,15 +19,15 @@ As a seasoned Cloud DevSecOps Engineer with a keen interest in integrating robus
 
 Before you can start scanning the vulnerable web application with SonarQube and inspecting the results, you'll want to ensure you have the following list of applications and software packages installed:
 
-  ![Docker Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/docker-logo-blue.svg align="center")
+  ![Docker Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/docker-logo-blue.svg align="center")
 
 - **[Docker](https://www.docker.com/products/docker-desktop)** - We're going to be launching the application from Docker and also running the scans using Docker as well.
 
-  ![VS Code Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/vscode_icon.webp align="center")
+  ![VS Code Logo](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/vscode_icon.webp align="center")
 
 - **[VS Code](https://code.visualstudio.com/)** - This is not a hard requirement but highly recommended for viewing and editing files like the Docker Compose YAML file.
 
-  ![Git](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/Git_icon.svg.png align="center")
+  ![Git](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/Git_icon.svg.png align="center")
 
 - **[Git](https://git.com)** - We're going to need this to clone and checkout the repositories.
 
@@ -37,7 +37,7 @@ Before you can start scanning the vulnerable web application with SonarQube and 
 
 SonarQube is a self-managed automatic code review tool that systematically helps you deliver clean code. I've used SonarQube several times within the past to help me out with DevSecOps related work or really to scan my code.
 
-![SonarQube](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/sonarqube-logo.svg align="center")
+![SonarQube](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/sonarqube-logo.svg align="center")
 
 The application can be integrated with various different IDEs and pipelines to build, test, and deploy your code, and to be able to scan your code for all kinds of issues—not just security issues. It could be refactoring issues that your code has and many other things. Here are some key features of SonarQube:
 
@@ -206,7 +206,7 @@ Once SonarQube is fully operational, navigate to `http://localhost:9001` in your
 
 - **Change the default password** when prompted.
 
-![Changing Default Password](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/sonarqube_password_change.png align="center")
+![Changing Default Password](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/sonarqube_password_change.png align="center")
 
 ### Creating a Project in SonarQube
 
@@ -217,7 +217,7 @@ Create a new project in SonarQube to scan. For this example, we'll use a **vulne
 
 You'll want to generate a token for Sonar Scanner and keep it safe as you'll need it for the scanning process.
 
-![Token Example for Sonar Scanner](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/sonarqube_token_example.png align="center")
+![Token Example for Sonar Scanner](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/sonarqube_token_example.png align="center")
 >**NOTE**: The highlighted token will not be valid; this is an example. Your token will be different and will be generated automatically.
 
 ### Running Sonar Scanner using Docker
@@ -248,7 +248,7 @@ sonarsource/sonar-scanner-cli \
 
 The scan will take some time _(roughly about 4-8 minutes)_, so feel free to take a stretch break! Once completed, the results will be published to your SonarQube project as shown below:
 
-![SonarQube Results Below Example](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/sonarqube_results_example.png align="center")
+![SonarQube Results Below Example](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/sonarqube_results_example.png align="center")
 
 ### Reviewing Results in SonarQube
 
@@ -262,7 +262,7 @@ Security vulnerabilities are critical issues within your code that can be exploi
 
   One common security vulnerability is having SSL certification validation disabled in your application. SSL (Secure Sockets Layer) certificates are essential for establishing encrypted connections between clients and servers, ensuring that data transferred over the network is secure and cannot be intercepted by unauthorized parties. If SSL certification validation is set to false, your application is vulnerable to man-in-the-middle (MITM) attacks, where attackers can intercept and manipulate the data being exchanged.
 
-  ![Example Vulnerability](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/ssl_disabled_vulnerability.png align="center")
+  ![Example Vulnerability](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/ssl_disabled_vulnerability.png align="center")
 
   **Solution**:
   Ensure that SSL certification validation is enabled in all your connections. This can usually be done by configuring the appropriate settings in your application's connection properties or environment variables. For example, in a Python application using the `requests` library, you should ensure SSL verification is enabled:
@@ -284,7 +284,7 @@ Code smells are indicators of potential problems in your code that, while not ne
 
   A common code smell is the duplication of strings or literals multiple times throughout your code. This practice can lead to inconsistencies and make your code harder to maintain. For instance, if a string value changes, you will need to update it in multiple places, increasing the risk of errors and inconsistencies.
 
-  ![Code Smells Example](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/code_smells_example.png align="center")
+  ![Code Smells Example](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/code_smells_example.png align="center")
 
   **Solution**:
   Use constants or configuration files to store commonly used strings or literals. This approach centralizes the values, making your code more manageable and reducing the risk of errors. For example, in a Python application, you might define constants in a separate module:
@@ -329,6 +329,6 @@ Thank you so much for reading! I hope you were able to take away valuable insigh
 
 **Disclaimer:** This blog post reflects my personal experiences and opinions. This blogs original content is based off of the following video:
 
-[![Video](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/sast_scanning_with_docker_sonarqube/vid_thumbnail.svg align="center")](https://youtu.be/UoAfU5iAhl0?si=x0gaP54T717ds9JJ)
+[![Video](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/sast_scanning_with_docker_sonarqube/vid_thumbnail.svg align="center")](https://youtu.be/UoAfU5iAhl0?si=x0gaP54T717ds9JJ)
 
 _All images located in the blog post have been sourced from different places. Click on the image to get redirected to the original source._
