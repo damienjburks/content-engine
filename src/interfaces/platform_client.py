@@ -78,3 +78,16 @@ class PlatformClient(ABC):
             Tuple of (article_id, is_published) or (None, None) if not found
         """
         pass
+
+    @abstractmethod
+    def delete_article(self, article_id: str) -> bool:
+        """
+        Delete an article from the platform.
+
+        Args:
+            article_id: Platform-specific identifier for the article to delete
+
+        Returns:
+            True if deletion was successful, False otherwise
+        """
+        pass

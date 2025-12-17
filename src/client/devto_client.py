@@ -7,6 +7,10 @@ from os import environ
 import logging
 from typing import Dict, List, Optional, Tuple
 import requests
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from src.interfaces.platform_client import PlatformClient
 from src.models.post_content import PostContent
@@ -343,6 +347,52 @@ class DevToClient(PlatformClient):
         except Exception as e:
             self.error_handler.log_api_error(e, "devto", title, "find_article_by_title")
             return (None, None)
+
+    def delete_article(self, article_id: str) -> bool:
+        """
+        Delete an article from dev.to.
+
+        Args:
+            article_id: The ID of the article to delete
+
+        Returns:
+            True if deletion was successful, False otherwise
+        """
+        try:
+            url = f"{ARTICLES_URL}/articles/{article_id}"
+            headers = self._generate_authenticated_header()
+
+            response = requests.delete(url, headers=headers)
+
+            if response.status_code == 204:
+                # 204 No Content indicates successful deletion
+                self.error_handler.log_success(
+                    "devto", f"Article ID {article_id}", "deleted", article_id
+                )
+                return True
+            elif response.status_code == 404:
+                # Article not found
+                self.logging.warning(f"Article {article_id} not found on dev.to for deletion")
+                return False
+            else:
+                # Other error
+                self.error_handler.log_api_error(
+                    ValueError(f"Delete failed with status {response.status_code}"),
+                    "devto", 
+                    f"Article ID {article_id}", 
+                    "delete",
+                    {"status_code": response.status_code, "response": response.text}
+                )
+                return False
+
+        except (AuthenticationError, RateLimitError, APIError):
+            # Re-raise our custom exceptions
+            raise
+        except Exception as e:
+            self.error_handler.log_api_error(
+                e, "devto", f"Article ID {article_id}", "delete"
+            )
+            return False
 
     def _generate_authenticated_header(self):
         """

@@ -6,6 +6,7 @@ A Python application for publishing content to multiple platforms (dev.to and Ha
 
 - **Multi-Platform Publishing**: Simultaneously publish to dev.to and Hashnode
 - **Intelligent Content Detection**: Automatically detects existing articles and updates only when content changes
+- **Automatic Article Removal**: Removes articles from all platforms when markdown files are deleted
 - **Platform-Specific Transformations**: Handles platform-specific formatting requirements
 - **Error Isolation**: Platform failures don't affect publishing to other platforms
 - **Extensible Architecture**: Easy to add support for new blogging platforms
@@ -65,13 +66,22 @@ export DEVTO_API_KEY="your_devto_api_key_here"
 
 1. Go to [Hashnode Developer Settings](https://hashnode.com/settings/developer)
 2. Generate a Personal Access Token
-3. Set the environment variables:
+3. Go to [Hashnode Blog Settings](https://hashnode.com/settings/blogs) to get your Publication ID
+4. Set the environment variables:
 
 ```bash
 export HASHNODE_API_KEY="your_hashnode_api_key_here"
 export HASHNODE_USERNAME="your_hashnode_username"
-export HASHNODE_PUBLICATION_ID="your_hashnode_publication_id"
+export HASHNODE_PUBLICATION_ID="your_24_character_publication_id"
 ```
+
+**Note**: The Publication ID should be a 24-character hexadecimal string (MongoDB ObjectId format). You can find it using the helper script:
+
+```bash
+python scripts/get_hashnode_publication_id.py
+```
+
+This script will automatically find your publication IDs and show you which one to use.
 
 ### Optional Configuration
 
@@ -89,6 +99,9 @@ export MARKDOWN_FILE_PATTERN="posts/*.md"
 
 # Exclude specific files (default: README.md)
 export EXCLUDE_FILES="README.md,CHANGELOG.md"
+
+# Skip deletion when permission errors occur (default: true)
+export SKIP_DELETION_ON_PERMISSION_ERROR="true"
 ```
 
 ## Usage
@@ -123,11 +136,49 @@ INFO:src.main:'Another Post' - Skipped (no changes): devto, hashnode
 
 The system automatically detects and processes all markdown files matching your configured pattern. It will:
 
-1. **Check for existing articles** on each platform
-2. **Create new articles** if none exist
-3. **Update existing articles** only if content has changed
-4. **Skip unchanged articles** to preserve engagement metrics
-5. **Report results** for each platform and article
+1. **Remove deleted articles**: Check for articles that no longer have corresponding markdown files and remove them from all platforms
+2. **Check for existing articles** on each platform
+3. **Create new articles** if none exist
+4. **Update existing articles** only if content has changed
+5. **Skip unchanged articles** to preserve engagement metrics
+6. **Report results** for each platform and article
+
+### Automatic Article Removal
+
+When you delete a markdown file, the Content Engine will automatically:
+
+- ✅ **Detect the missing file** by comparing current files with published articles
+- ✅ **Remove from all platforms** where the article exists
+- ✅ **Log the removal process** for transparency
+- ✅ **Continue on errors** - if removal fails on one platform, it continues with others
+- ✅ **Handle permission errors gracefully** - skips articles in collaborative blogs where you lack admin access
+
+**Example workflow:**
+```bash
+# You have: blogs/my-article.md (published to dev.to and Hashnode)
+rm blogs/my-article.md
+
+# Next time you run content-engine:
+content-engine
+# Output: 
+# INFO: Removing 'My Article' from devto...
+# INFO: ✅ Successfully removed 'My Article' from devto
+# INFO: Removing 'My Article' from hashnode...
+# INFO: ✅ Successfully removed 'My Article' from hashnode
+```
+
+**Collaborative Blog Handling:**
+
+If you're a contributor (not admin) on a Hashnode publication, you'll see:
+
+```bash
+# INFO: Removing 'My Article' from hashnode...
+# WARNING: ⚠️  Cannot delete article from Hashnode: Insufficient permissions (collaborative blog). 
+#          This article is in a publication where you have contributor access but admin access is required for deletion. 
+#          Please ask a publication admin to delete this article manually.
+```
+
+The system will continue processing other articles and platforms normally.
 
 ## Frontmatter Fields
 
@@ -356,6 +407,20 @@ domain: "your.domain"     # This field is required
 - Confirm both `HASHNODE_API_KEY` and `HASHNODE_USERNAME` are set
 - Verify your Hashnode publication exists
 - Check that your API token has publication permissions
+
+#### Collaborative Blog Permission Issues
+
+**Problem**: `User does not have the minimum required role in the publication`
+
+**Solution**:
+
+This occurs when you're a contributor on a Hashnode publication but don't have admin access. The system will automatically skip deletion for these articles and log a warning.
+
+- **For your own publications**: You have full admin access and can delete articles
+- **For collaborative publications**: Only admins can delete articles
+- **Workaround**: Ask the publication admin to delete the article manually, or leave it published
+
+The system will continue processing other articles normally. This is expected behavior for collaborative blogs.
 
 ### Debug Mode
 

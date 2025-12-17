@@ -10,6 +10,7 @@ import time
 from typing import Dict, List, Optional
 
 import frontmatter
+from dotenv import load_dotenv
 
 from src.client.devto_client import DevToClient
 from src.client.hashnode_client import HashnodeClient
@@ -79,6 +80,9 @@ class PostPublisher:
                 "MARKDOWN_FILE_PATTERN", "blogs/*.md"
             ),
             "exclude_files": os.environ.get("EXCLUDE_FILES", "README.md").split(","),
+            "skip_deletion_on_permission_error": os.environ.get(
+                "SKIP_DELETION_ON_PERMISSION_ERROR", "true"
+            ).lower() == "true",
         }
 
         # Clean up platform names
@@ -162,6 +166,85 @@ class PostPublisher:
             raise ValueError(error_msg)
 
         return clients
+
+    def remove_deleted_articles(self) -> None:
+        """
+        Remove articles from platforms when corresponding markdown files are deleted.
+        
+        Implements Requirement 10:
+        - Identify articles that no longer have corresponding markdown files
+        - Remove them from all platforms
+        """
+        try:
+            # Get current markdown files
+            current_files = self._get_list_of_markdown_files()
+            current_titles = set()
+            
+            # Extract titles from current files
+            for md_file in current_files:
+                try:
+                    post_content = self._parse_markdown_file(md_file)
+                    if post_content:
+                        current_titles.add(post_content.title)
+                except Exception as e:
+                    self.logger.warning(f"Could not parse {md_file} for title extraction: {str(e)}")
+                    continue
+            
+            self.logger.info(f"Found {len(current_titles)} current articles")
+            
+            # Check each platform for articles that should be removed
+            for platform_name, client in self.platform_clients.items():
+                try:
+                    self.logger.info(f"Checking {platform_name} for articles to remove...")
+                    
+                    # Get all articles from the platform
+                    platform_articles = client.get_articles()
+                    
+                    articles_to_remove = []
+                    for article in platform_articles:
+                        article_title = article.get("title", "")
+                        if article_title and article_title not in current_titles:
+                            articles_to_remove.append(article)
+                    
+                    if not articles_to_remove:
+                        self.logger.info(f"No articles to remove from {platform_name}")
+                        continue
+                    
+                    self.logger.info(f"Found {len(articles_to_remove)} articles to remove from {platform_name}")
+                    
+                    # Remove each article
+                    for article in articles_to_remove:
+                        try:
+                            article_id = article.get("id")
+                            article_title = article.get("title", "Unknown")
+                            
+                            if not article_id:
+                                self.logger.warning(f"No ID found for article '{article_title}' on {platform_name}")
+                                continue
+                            
+                            self.logger.info(f"Removing '{article_title}' from {platform_name}...")
+                            
+                            success = client.delete_article(article_id)
+                            
+                            if success:
+                                self.logger.info(f"✅ Successfully removed '{article_title}' from {platform_name}")
+                            else:
+                                self.logger.error(f"❌ Failed to remove '{article_title}' from {platform_name}")
+                                
+                        except Exception as e:
+                            error_msg = str(e)
+                            if "does not have the minimum required role" in error_msg or "FORBIDDEN" in error_msg:
+                                self.logger.warning(f"⚠️  Skipped '{article.get('title', 'Unknown')}' on {platform_name}: Insufficient permissions (collaborative blog)")
+                            else:
+                                self.logger.error(f"Error removing article '{article.get('title', 'Unknown')}' from {platform_name}: {error_msg}")
+                            continue
+                    
+                except Exception as e:
+                    self.logger.error(f"Error checking {platform_name} for articles to remove: {str(e)}")
+                    continue
+                    
+        except Exception as e:
+            self.logger.error(f"Error in remove_deleted_articles: {str(e)}")
 
     def publish_to_all_platforms(self) -> None:
         """
@@ -391,6 +474,9 @@ class PostPublisher:
 
 def main():
     """Main entry point for the content engine CLI."""
+    # Load environment variables from .env file
+    load_dotenv()
+    
     try:
         # Initialize publisher with all available platforms
         publisher = PostPublisher()
@@ -414,6 +500,9 @@ def main():
             return
 
         logging.info(f"Publishing to platforms: {successful_platforms}")
+
+        # Remove articles for deleted markdown files
+        publisher.remove_deleted_articles()
 
         # Publish to all configured platforms
         publisher.publish_to_all_platforms()

@@ -9,9 +9,13 @@ import time
 from os import environ
 from typing import Dict, List, Optional, Tuple
 
+from dotenv import load_dotenv
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.exceptions import TransportError
+
+# Load environment variables from .env file
+load_dotenv()
 
 from src.interfaces.platform_client import PlatformClient
 from src.models.post_content import PostContent
@@ -66,7 +70,17 @@ class HashnodeClient(PlatformClient):
                 "hashnode", "HASHNODE_PUBLICATION_ID environment variable is not set"
             )
             raise AuthenticationError(
-                "HASHNODE_PUBLICATION_ID environment variable is required",
+                "HASHNODE_PUBLICATION_ID environment variable is required. Get it from https://hashnode.com/settings/blogs",
+                platform="hashnode",
+            )
+
+        # Validate publication ID format (should be a valid MongoDB ObjectId)
+        if not self._is_valid_object_id(HASHNODE_PUBLICATION_ID):
+            self.error_handler.log_authentication_error(
+                "hashnode", f"Invalid HASHNODE_PUBLICATION_ID format: {HASHNODE_PUBLICATION_ID}"
+            )
+            raise AuthenticationError(
+                f"HASHNODE_PUBLICATION_ID must be a valid MongoDB ObjectId (24 hex characters). Got: {HASHNODE_PUBLICATION_ID}. Get your publication ID from https://hashnode.com/settings/blogs",
                 platform="hashnode",
             )
 
@@ -94,6 +108,20 @@ class HashnodeClient(PlatformClient):
             time.sleep(sleep_time)
 
         self.last_request_time = time.time()
+
+    def _is_valid_object_id(self, object_id: str) -> bool:
+        """
+        Validate if a string is a valid MongoDB ObjectId format.
+        
+        Args:
+            object_id: The string to validate
+            
+        Returns:
+            True if valid ObjectId format, False otherwise
+        """
+        import re
+        # MongoDB ObjectId is 24 hex characters
+        return bool(re.match(r'^[0-9a-fA-F]{24}$', object_id))
 
     def _run_query(
         self, query, variables=None, operation_name=None, article_title=None
@@ -684,3 +712,79 @@ class HashnodeClient(PlatformClient):
                 e, "hashnode", title, "find_article_by_title"
             )
             return (None, None)
+
+    def delete_article(self, article_id: str) -> bool:
+        """
+        Delete an article from Hashnode.
+
+        Args:
+            article_id: The ID of the article to delete
+
+        Returns:
+            True if deletion was successful, False otherwise
+        """
+        try:
+            # GraphQL mutation for deleting a post
+            delete_mutation = gql(
+                """
+                mutation RemovePost($input: RemovePostInput!) {
+                    removePost(input: $input) {
+                        post {
+                            id
+                        }
+                    }
+                }
+            """
+            )
+
+            variables = {"input": {"id": article_id}}
+
+            result = self._run_query(delete_mutation, variables, "delete", f"Article ID {article_id}")
+
+            if result and "removePost" in result and result["removePost"]["post"]:
+                # Successful deletion
+                self.error_handler.log_success(
+                    "hashnode", f"Article ID {article_id}", "deleted", article_id
+                )
+                return True
+            else:
+                # Deletion failed
+                self.error_handler.log_api_error(
+                    ValueError("Delete operation did not return expected result"),
+                    "hashnode",
+                    f"Article ID {article_id}",
+                    "delete",
+                    {"response": result}
+                )
+                return False
+
+        except TransportError as e:
+            # Handle permission errors specifically
+            error_str = str(e)
+            if "does not have the minimum required role" in error_str or "FORBIDDEN" in error_str:
+                # Extract publication info if available
+                if "minRequiredRole" in error_str and "actualRole" in error_str:
+                    self.logging.warning(
+                        f"⚠️  Cannot delete article {article_id} from Hashnode: "
+                        f"Insufficient permissions (collaborative blog). "
+                        f"This article is in a publication where you have contributor access but admin access is required for deletion. "
+                        f"Please ask a publication admin to delete this article manually."
+                    )
+                else:
+                    self.logging.warning(
+                        f"⚠️  Cannot delete article {article_id} from Hashnode: "
+                        f"Insufficient permissions. You may not have admin access to this publication."
+                    )
+                # Return True to indicate we "handled" this gracefully (not a system error)
+                return True
+            else:
+                # Other transport errors - re-raise for normal handling
+                raise
+        except (AuthenticationError, RateLimitError, APIError):
+            # Re-raise our custom exceptions
+            raise
+        except Exception as e:
+            self.error_handler.log_api_error(
+                e, "hashnode", f"Article ID {article_id}", "delete"
+            )
+            return False
