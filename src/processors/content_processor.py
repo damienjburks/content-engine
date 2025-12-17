@@ -56,11 +56,8 @@ class ContentProcessor(ContentProcessorInterface):
         Returns:
             Transformed content for Hashnode
         """
-        # Remove HTML alignment attributes that are not supported by Hashnode
-        content = re.sub(r'\s*align="center"', "", content)
-        content = re.sub(r'\s*align="left"', "", content)
-        content = re.sub(r'\s*align="right"', "", content)
-
+        # Hashnode supports image alignment attributes, so we preserve them
+        # No specific transformations needed for Hashnode currently
         return content
 
     def _apply_devto_transformations(self, content: str) -> str:
@@ -73,8 +70,11 @@ class ContentProcessor(ContentProcessorInterface):
         Returns:
             Transformed content for dev.to
         """
-        # For dev.to, we preserve existing formatting
-        # No specific transformations needed currently
+        # Remove HTML alignment attributes that are not supported by dev.to
+        content = re.sub(r'\s*align="center"', "", content)
+        content = re.sub(r'\s*align="left"', "", content)
+        content = re.sub(r'\s*align="right"', "", content)
+
         return content
 
     def normalize_content_for_comparison(self, content: str) -> str:
@@ -93,8 +93,8 @@ class ContentProcessor(ContentProcessorInterface):
         # Normalize whitespace
         content = re.sub(r"\s+", " ", content.strip())
 
-        # Remove platform-specific formatting for comparison
-        content = re.sub(r'\s*align="[^"]*"', "", content)
+        # Preserve alignment attributes for comparison since they're supported
+        # No need to remove them for comparison purposes
 
         return content
 

@@ -13,7 +13,7 @@ enableToc: true
 
 In this article, I will share my journey on how to successfully pass the AWS Certified DevOps Engineer Professional exam in just 60 days. My hope is that by sharing my experience, resources, study plan, and some crucial tips, I can help you navigate your way to acing this challenging certification exam.
 
-![Certification Image](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/conquered_aws_devops_pro/certification_devops_pro.jpg align="center")
+![Certification Image](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/conquered_aws_devops_pro/certification_devops_pro.jpg align="center")
 
 First off, this exam is no small feat. It's designed for individuals who are engaged in a DevOps or DevSecOps engineering role, focusing on operating, managing, and provisioning distributed application systems on the AWS platform. This certification validates your technical expertise in continuous delivery systems, methodologies on AWS, security controls automation, and much more.
 
@@ -21,7 +21,7 @@ First off, this exam is no small feat. It's designed for individuals who are eng
 
 Before diving deep into my study plan and the resources I used, let's get a brief overview of what this exam entails. The AWS Certified DevOps Engineer Professional exam is recognized as one of the more challenging tests compared to other AWS professional level exams. It takes 180 minutes, costs $300 USD, and contains 75 questions, either multiple choice or multiple response.
 
-![Exam Overview](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/conquered_aws_devops_pro/exam_overview.png align="center")
+![Exam Overview](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/conquered_aws_devops_pro/exam_overview.png align="center")
 
 > **NOTE**: The exam information may change, so be sure to validate this by going to the landing page here: [Amazon's Website - AWS Certified DevOps Professional Overview](https://aws.amazon.com/certification/certified-devops-engineer-professional/)
 
@@ -37,15 +37,15 @@ Let me be _really_ honest; this exam is **_EXTREMELY_** difficult. I strongly re
 
 - [**Udemy Course by Stephane Maarek**](https://www.udemy.com/course/aws-certified-devops-engineer-professional-hands-on/): This was my primary resource. Stephane's detailed explanations and hands-on approach were instrumental in helping me grasp complex concepts quickly. This course is a 10 out of 10, and I highly recommend his other courses for any AWS certification.
 
-![Udemy Course by Stephane Maarek](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/conquered_aws_devops_pro/stephanes_course.jpeg align="center")
+![Udemy Course by Stephane Maarek](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/conquered_aws_devops_pro/stephanes_course.jpeg align="center")
 
 - [**TutorialsDojo Cheat Sheets**](https://tutorialsdojo.com/aws-cheat-sheets/): A fantastic, free resource that provides summaries of various AWS services. These cheat sheets are great for quick revisions.
 
-![TutorialsDojo Cheat Sheets](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/conquered_aws_devops_pro/tutorials_dojo_cheat_sheets.png align="center")
+![TutorialsDojo Cheat Sheets](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/conquered_aws_devops_pro/tutorials_dojo_cheat_sheets.png align="center")
 
 - [**TutorialsDojo Practice Exams**](https://portal.tutorialsdojo.com/courses/aws-certified-devops-engineer-professional-practice-exams/): In addition to the cheat sheets, I also leveraged the TutorialsDojo practice exams, which mimic the difficulty level of the actual exam, providing both a challenge and a solid learning opportunity.
 
-![TutorialsDojo Practice Exams](https://raw.githubusercontent.com/damienjburks/content-engine/main/blogs/assets/conquered_aws_devops_pro/practice_exams_td.png align="center")
+![TutorialsDojo Practice Exams](https://raw.githubusercontent.com/damienjburks/content-engine/main/src/assets/conquered_aws_devops_pro/practice_exams_td.png align="center")
 
 ### My Study Schedule
 
