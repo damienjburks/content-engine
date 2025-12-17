@@ -79,8 +79,8 @@ class TestErrorHandler:
             "devto", "Test Article", "created", "12345", {"url": "https://dev.to/test"}
         )
 
-        self.logger.info.assert_called_once()
-        call_args = self.logger.info.call_args[0][0]
+        self.logger.debug.assert_called_once()
+        call_args = self.logger.debug.call_args[0][0]
 
         assert "SUCCESS: Created 'Test Article' on devto" in call_args
         assert "ID: 12345" in call_args

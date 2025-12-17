@@ -22,8 +22,8 @@ from src.utils.error_handler import (
     RateLimitError,
     APIError,
 )
-
-logging.basicConfig(level=logging.INFO)
+from src.utils.progress_tracker import ProgressTracker, OperationResult
+from src.models.delete_result import DeleteResult
 
 
 class PostPublisher:
@@ -48,6 +48,9 @@ class PostPublisher:
         self.logger = logging.getLogger(__name__)
         self.error_handler = ErrorHandler(self.logger)
         self.non_updated_articles = []
+        
+        # Initialize progress tracker
+        self.progress_tracker = ProgressTracker()
 
         # Configuration management for multiple platforms (Requirement 5.5)
         self.config = self._load_configuration()
@@ -58,7 +61,7 @@ class PostPublisher:
         # Initialize PublicationManager with configured clients
         self.publication_manager = PublicationManager(self.platform_clients)
 
-        self.logger.info(
+        self.logger.debug(
             f"PostPublisher initialized with platforms: {list(self.platform_clients.keys())}"
         )
 
@@ -82,7 +85,8 @@ class PostPublisher:
             "exclude_files": os.environ.get("EXCLUDE_FILES", "README.md").split(","),
             "skip_deletion_on_permission_error": os.environ.get(
                 "SKIP_DELETION_ON_PERMISSION_ERROR", "true"
-            ).lower() == "true",
+            ).lower()
+            == "true",
         }
 
         # Clean up platform names
@@ -90,7 +94,7 @@ class PostPublisher:
             p.strip().lower() for p in config["enabled_platforms"] if p.strip()
         ]
 
-        self.logger.info(f"Configuration loaded: {config}")
+        self.logger.debug(f"Configuration loaded: {config}")
         return config
 
     def _initialize_platform_clients(
@@ -122,7 +126,7 @@ class PostPublisher:
                     # Check if DevTo API key is available
                     if os.environ.get("DEVTO_API_KEY"):
                         clients["devto"] = DevToClient()
-                        self.logger.info("DevTo client initialized successfully")
+                        self.logger.debug("DevTo client initialized successfully")
                     else:
                         self.error_handler.log_authentication_error(
                             "devto", "DEVTO_API_KEY not found"
@@ -136,7 +140,7 @@ class PostPublisher:
                         and os.environ.get("HASHNODE_PUBLICATION_ID")
                     ):
                         clients["hashnode"] = HashnodeClient()
-                        self.logger.info("Hashnode client initialized successfully")
+                        self.logger.debug("Hashnode client initialized successfully")
                     else:
                         missing_vars = []
                         if not os.environ.get("HASHNODE_API_KEY"):
@@ -170,7 +174,7 @@ class PostPublisher:
     def remove_deleted_articles(self) -> None:
         """
         Remove articles from platforms when corresponding markdown files are deleted.
-        
+
         Implements Requirement 10:
         - Identify articles that no longer have corresponding markdown files
         - Remove them from all platforms
@@ -179,7 +183,7 @@ class PostPublisher:
             # Get current markdown files
             current_files = self._get_list_of_markdown_files()
             current_titles = set()
-            
+
             # Extract titles from current files
             for md_file in current_files:
                 try:
@@ -187,62 +191,137 @@ class PostPublisher:
                     if post_content:
                         current_titles.add(post_content.title)
                 except Exception as e:
-                    self.logger.warning(f"Could not parse {md_file} for title extraction: {str(e)}")
+                    self.logger.warning(
+                        f"Could not parse {md_file} for title extraction: {str(e)}"
+                    )
                     continue
-            
-            self.logger.info(f"Found {len(current_titles)} current articles")
-            
+
+            self.logger.debug(f"Found {len(current_titles)} current articles")
+
             # Check each platform for articles that should be removed
             for platform_name, client in self.platform_clients.items():
                 try:
-                    self.logger.info(f"Checking {platform_name} for articles to remove...")
-                    
+                    self.logger.debug(
+                        f"Checking {platform_name} for articles to remove..."
+                    )
+
                     # Get all articles from the platform
                     platform_articles = client.get_articles()
-                    
+
                     articles_to_remove = []
                     for article in platform_articles:
                         article_title = article.get("title", "")
                         if article_title and article_title not in current_titles:
                             articles_to_remove.append(article)
-                    
+
                     if not articles_to_remove:
-                        self.logger.info(f"No articles to remove from {platform_name}")
+                        self.logger.debug(f"No articles to remove from {platform_name}")
                         continue
-                    
-                    self.logger.info(f"Found {len(articles_to_remove)} articles to remove from {platform_name}")
-                    
-                    # Remove each article
-                    for article in articles_to_remove:
-                        try:
-                            article_id = article.get("id")
-                            article_title = article.get("title", "Unknown")
+
+                    self.logger.debug(
+                        f"Found {len(articles_to_remove)} articles to remove from {platform_name}"
+                    )
+
+                    # Remove each article with progress tracking
+                    with self.progress_tracker.create_progress_context() as progress:
+                        task = progress.add_task(
+                            f"[red]Removing articles from {platform_name}...", 
+                            total=len(articles_to_remove)
+                        )
+                        
+                        for article in articles_to_remove:
+                            try:
+                                article_id = article.get("id")
+                                article_title = article.get("title", "Unknown")
+
+                                if not article_id:
+                                    self.logger.warning(
+                                        f"No ID found for article '{article_title}' on {platform_name}"
+                                    )
+                                    self.progress_tracker.add_result(OperationResult(
+                                        title=article_title,
+                                        platform=platform_name,
+                                        action="failed",
+                                        success=False,
+                                        error_message="No article ID found"
+                                    ))
+                                    progress.advance(task)
+                                    continue
+
+                                progress.update(task, description=f"[red]Removing '{article_title}' from {platform_name}...")
+
+                                delete_result = client.delete_article(article_id)
+
+                                if delete_result.success:
+                                    self.logger.debug(
+                                        f"✅ Successfully removed '{article_title}' from {platform_name}"
+                                    )
+                                    self.progress_tracker.add_result(OperationResult(
+                                        title=article_title,
+                                        platform=platform_name,
+                                        action="deleted",
+                                        success=True,
+                                        article_id=str(article_id)
+                                    ))
+                                elif delete_result.already_deleted:
+                                    self.logger.debug(
+                                        f"⏭️ '{article_title}' already removed from {platform_name}"
+                                    )
+                                    self.progress_tracker.add_result(OperationResult(
+                                        title=article_title,
+                                        platform=platform_name,
+                                        action="skipped",
+                                        success=True,
+                                        error_message="Already deleted"
+                                    ))
+                                else:
+                                    self.logger.error(
+                                        f"❌ Failed to remove '{article_title}' from {platform_name}"
+                                    )
+                                    self.progress_tracker.add_result(OperationResult(
+                                        title=article_title,
+                                        platform=platform_name,
+                                        action="failed",
+                                        success=False,
+                                        error_message="Delete operation failed"
+                                    ))
+
+                            except Exception as e:
+                                error_msg = str(e)
+                                if (
+                                    "does not have the minimum required role" in error_msg
+                                    or "FORBIDDEN" in error_msg
+                                ):
+                                    self.logger.warning(
+                                        f"⚠️  Skipped '{article.get('title', 'Unknown')}' on {platform_name}: Insufficient permissions (collaborative blog)"
+                                    )
+                                    self.progress_tracker.add_result(OperationResult(
+                                        title=article.get('title', 'Unknown'),
+                                        platform=platform_name,
+                                        action="skipped",
+                                        success=True,
+                                        error_message="Insufficient permissions"
+                                    ))
+                                else:
+                                    self.logger.error(
+                                        f"Error removing article '{article.get('title', 'Unknown')}' from {platform_name}: {error_msg}"
+                                    )
+                                    self.progress_tracker.add_result(OperationResult(
+                                        title=article.get('title', 'Unknown'),
+                                        platform=platform_name,
+                                        action="failed",
+                                        success=False,
+                                        error_message=error_msg
+                                    ))
                             
-                            if not article_id:
-                                self.logger.warning(f"No ID found for article '{article_title}' on {platform_name}")
-                                continue
-                            
-                            self.logger.info(f"Removing '{article_title}' from {platform_name}...")
-                            
-                            success = client.delete_article(article_id)
-                            
-                            if success:
-                                self.logger.info(f"✅ Successfully removed '{article_title}' from {platform_name}")
-                            else:
-                                self.logger.error(f"❌ Failed to remove '{article_title}' from {platform_name}")
-                                
-                        except Exception as e:
-                            error_msg = str(e)
-                            if "does not have the minimum required role" in error_msg or "FORBIDDEN" in error_msg:
-                                self.logger.warning(f"⚠️  Skipped '{article.get('title', 'Unknown')}' on {platform_name}: Insufficient permissions (collaborative blog)")
-                            else:
-                                self.logger.error(f"Error removing article '{article.get('title', 'Unknown')}' from {platform_name}: {error_msg}")
-                            continue
-                    
+                            progress.advance(task)
+
                 except Exception as e:
-                    self.logger.error(f"Error checking {platform_name} for articles to remove: {str(e)}")
+                    self.logger.error(
+                        f"Error checking {platform_name} for articles to remove: {str(e)}"
+                    )
                     continue
-                    
+
         except Exception as e:
             self.logger.error(f"Error in remove_deleted_articles: {str(e)}")
 
@@ -257,46 +336,71 @@ class PostPublisher:
         md_files = self._get_list_of_markdown_files()
 
         if not md_files:
-            self.logger.info("No markdown files found to publish")
+            self.logger.debug("No markdown files found to publish")
             return
 
-        self.logger.info(f"Found {len(md_files)} markdown files to process")
+        self.logger.debug(f"Found {len(md_files)} markdown files to process")
 
-        for md_file in md_files:
-            try:
-                self.logger.info(f"Processing file: {md_file}")
+        with self.progress_tracker.create_progress_context() as progress:
+            task = progress.add_task("[green]Publishing articles...", total=len(md_files))
+            
+            for md_file in md_files:
+                try:
+                    progress.update(task, description=f"[green]Processing {md_file}...")
+                    self.logger.debug(f"Processing file: {md_file}")
 
-                # Parse markdown file into PostContent model
-                post_content = self._parse_markdown_file(md_file)
+                    # Parse markdown file into PostContent model
+                    post_content = self._parse_markdown_file(md_file)
 
-                if not post_content:
-                    self.logger.warning(f"Skipping {md_file} - could not parse content")
-                    continue
+                    if not post_content:
+                        self.logger.warning(f"Skipping {md_file} - could not parse content")
+                        progress.advance(task)
+                        continue
 
-                # Use PublicationManager to publish to all platforms
-                results = self.publication_manager.publish_to_all_platforms(
-                    post_content
-                )
+                    # Use PublicationManager to publish to all platforms
+                    results = self.publication_manager.publish_to_all_platforms(
+                        post_content
+                    )
 
-                # Process results and update tracking
-                self._process_publication_results(md_file, post_content, results)
+                    # Process results and update tracking
+                    self._process_publication_results(md_file, post_content, results)
 
-                # Rate limiting between files
-                if len(md_files) > 1:  # Only sleep if processing multiple files
-                    time.sleep(self.config["rate_limit_delay"])
+                    # Rate limiting between files
+                    if len(md_files) > 1:  # Only sleep if processing multiple files
+                        time.sleep(self.config["rate_limit_delay"])
 
-            except (AuthenticationError, RateLimitError, APIError) as e:
-                # Platform-specific errors are already logged by the error handler
-                self.logger.error(f"Platform error processing {md_file}: {str(e)}")
-                continue
-            except Exception as e:
-                self.error_handler.log_api_error(
-                    e, "system", None, "file_processing", {"file": md_file}
-                )
-                self.logger.error(
-                    f"Unexpected error processing {md_file}: {str(e)}", exc_info=True
-                )
-                continue
+                except (AuthenticationError, RateLimitError, APIError) as e:
+                    # Platform-specific errors are already logged by the error handler
+                    self.logger.error(f"Platform error processing {md_file}: {str(e)}")
+                    # Add error result for tracking
+                    if 'post_content' in locals():
+                        for platform in self.platform_clients.keys():
+                            self.progress_tracker.add_result(OperationResult(
+                                title=post_content.title,
+                                platform=platform,
+                                action="failed",
+                                success=False,
+                                error_message=str(e)
+                            ))
+                except Exception as e:
+                    self.error_handler.log_api_error(
+                        e, "system", None, "file_processing", {"file": md_file}
+                    )
+                    self.logger.error(
+                        f"Unexpected error processing {md_file}: {str(e)}", exc_info=True
+                    )
+                    # Add error result for tracking
+                    if 'post_content' in locals():
+                        for platform in self.platform_clients.keys():
+                            self.progress_tracker.add_result(OperationResult(
+                                title=post_content.title,
+                                platform=platform,
+                                action="failed",
+                                success=False,
+                                error_message=str(e)
+                            ))
+                
+                progress.advance(task)
 
     def _parse_markdown_file(self, md_file: str) -> Optional[PostContent]:
         """
@@ -350,6 +454,17 @@ class PostPublisher:
         skipped_platforms = []
 
         for result in results:
+            # Add result to progress tracker
+            self.progress_tracker.add_result(OperationResult(
+                title=post_content.title,
+                platform=result.platform,
+                action=result.action,
+                success=result.success,
+                error_message=result.error_message,
+                article_id=getattr(result, 'article_id', None),
+                url=getattr(result, 'url', None)
+            ))
+            
             if result.success:
                 if result.action == "skipped":
                     skipped_platforms.append(result.platform)
@@ -360,12 +475,12 @@ class PostPublisher:
 
         # Log summary for this file
         if successful_platforms:
-            self.logger.info(
+            self.logger.debug(
                 f"'{post_content.title}' - Success: {', '.join(successful_platforms)}"
             )
 
         if skipped_platforms:
-            self.logger.info(
+            self.logger.debug(
                 f"'{post_content.title}' - Skipped (no changes): {', '.join(skipped_platforms)}"
             )
             self.non_updated_articles.append(md_file)
@@ -476,10 +591,19 @@ def main():
     """Main entry point for the content engine CLI."""
     # Load environment variables from .env file
     load_dotenv()
-    
+
     try:
         # Initialize publisher with all available platforms
         publisher = PostPublisher()
+        
+        # Setup colored logging
+        publisher.progress_tracker.setup_colored_logging()
+        
+        # Print startup banner
+        publisher.progress_tracker.console.print(
+            "\n🚀 [bold blue]Content Engine[/bold blue] - Multi-Platform Publisher\n",
+            style="bold"
+        )
 
         # Validate configuration
         validation_results = publisher.validate_configuration()
@@ -499,7 +623,7 @@ def main():
             )
             return
 
-        logging.info(f"Publishing to platforms: {successful_platforms}")
+        logging.debug(f"Publishing to platforms: {successful_platforms}")
 
         # Remove articles for deleted markdown files
         publisher.remove_deleted_articles()
@@ -507,11 +631,9 @@ def main():
         # Publish to all configured platforms
         publisher.publish_to_all_platforms()
 
-        # Log summary
-        if publisher.non_updated_articles:
-            logging.info(
-                f"Articles with no changes: {len(publisher.non_updated_articles)}"
-            )
+        # Print comprehensive summary
+        publisher.progress_tracker.console.print("\n" + "="*60)
+        publisher.progress_tracker.print_summary()
 
     except Exception as e:
         logging.error(f"Error in main execution: {str(e)}", exc_info=True)

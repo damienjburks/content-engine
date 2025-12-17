@@ -4,6 +4,7 @@ Platform client interface for multi-platform blog publishing.
 
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Tuple
+from src.models.delete_result import DeleteResult
 
 
 class PlatformClient(ABC):
@@ -80,7 +81,7 @@ class PlatformClient(ABC):
         pass
 
     @abstractmethod
-    def delete_article(self, article_id: str) -> bool:
+    def delete_article(self, article_id: str) -> DeleteResult:
         """
         Delete an article from the platform.
 
@@ -88,6 +89,6 @@ class PlatformClient(ABC):
             article_id: Platform-specific identifier for the article to delete
 
         Returns:
-            True if deletion was successful, False otherwise
+            DeleteResult indicating success, failure, or already deleted
         """
         pass

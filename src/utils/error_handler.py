@@ -194,7 +194,7 @@ class ErrorHandler:
             details = ", ".join([f"{k}: {v}" for k, v in additional_info.items()])
             base_message += f" - {details}"
 
-        self.logger.info(base_message)
+        self.logger.debug(base_message)
 
     def log_partial_failure_summary(
         self,
@@ -311,7 +311,7 @@ def with_retry_and_rate_limiting(
                                 base_delay * (backoff_factor**attempt), max_delay
                             )
 
-                        error_handler.logger.info(
+                        error_handler.logger.debug(
                             f"Rate limit hit, retrying in {delay} seconds (attempt {attempt + 1}/{max_retries + 1})"
                         )
                         time.sleep(delay)
@@ -319,7 +319,7 @@ def with_retry_and_rate_limiting(
                     else:
                         # For other HTTP errors, use exponential backoff
                         delay = min(base_delay * (backoff_factor**attempt), max_delay)
-                        error_handler.logger.info(
+                        error_handler.logger.debug(
                             f"Request failed, retrying in {delay} seconds (attempt {attempt + 1}/{max_retries + 1})"
                         )
                         time.sleep(delay)
@@ -332,7 +332,7 @@ def with_retry_and_rate_limiting(
 
                     # Network-related errors - use exponential backoff
                     delay = min(base_delay * (backoff_factor**attempt), max_delay)
-                    error_handler.logger.info(
+                    error_handler.logger.debug(
                         f"Network error, retrying in {delay} seconds (attempt {attempt + 1}/{max_retries + 1}): {str(e)}"
                     )
                     time.sleep(delay)

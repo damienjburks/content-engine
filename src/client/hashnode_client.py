@@ -18,6 +18,7 @@ from gql.transport.exceptions import TransportError
 load_dotenv()
 
 from src.interfaces.platform_client import PlatformClient
+from src.models.delete_result import DeleteResult
 from src.models.post_content import PostContent
 from src.utils.error_handler import (
     ErrorHandler,
@@ -77,7 +78,8 @@ class HashnodeClient(PlatformClient):
         # Validate publication ID format (should be a valid MongoDB ObjectId)
         if not self._is_valid_object_id(HASHNODE_PUBLICATION_ID):
             self.error_handler.log_authentication_error(
-                "hashnode", f"Invalid HASHNODE_PUBLICATION_ID format: {HASHNODE_PUBLICATION_ID}"
+                "hashnode",
+                f"Invalid HASHNODE_PUBLICATION_ID format: {HASHNODE_PUBLICATION_ID}",
             )
             raise AuthenticationError(
                 f"HASHNODE_PUBLICATION_ID must be a valid MongoDB ObjectId (24 hex characters). Got: {HASHNODE_PUBLICATION_ID}. Get your publication ID from https://hashnode.com/settings/blogs",
@@ -112,16 +114,17 @@ class HashnodeClient(PlatformClient):
     def _is_valid_object_id(self, object_id: str) -> bool:
         """
         Validate if a string is a valid MongoDB ObjectId format.
-        
+
         Args:
             object_id: The string to validate
-            
+
         Returns:
             True if valid ObjectId format, False otherwise
         """
         import re
+
         # MongoDB ObjectId is 24 hex characters
-        return bool(re.match(r'^[0-9a-fA-F]{24}$', object_id))
+        return bool(re.match(r"^[0-9a-fA-F]{24}$", object_id))
 
     def _run_query(
         self, query, variables=None, operation_name=None, article_title=None
@@ -172,7 +175,7 @@ class HashnodeClient(PlatformClient):
                 # For other transport errors, retry with exponential backoff
                 if attempt < self.max_retries:
                     delay = 2.0 * (2**attempt)
-                    self.logging.info(
+                    self.logging.debug(
                         f"Hashnode API error, retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries + 1}): {str(e)}"
                     )
                     time.sleep(delay)
@@ -713,7 +716,7 @@ class HashnodeClient(PlatformClient):
             )
             return (None, None)
 
-    def delete_article(self, article_id: str) -> bool:
+    def delete_article(self, article_id: str) -> DeleteResult:
         """
         Delete an article from Hashnode.
 
@@ -721,7 +724,7 @@ class HashnodeClient(PlatformClient):
             article_id: The ID of the article to delete
 
         Returns:
-            True if deletion was successful, False otherwise
+            DeleteResult indicating success, failure, or already deleted
         """
         try:
             # GraphQL mutation for deleting a post
@@ -739,14 +742,16 @@ class HashnodeClient(PlatformClient):
 
             variables = {"input": {"id": article_id}}
 
-            result = self._run_query(delete_mutation, variables, "delete", f"Article ID {article_id}")
+            result = self._run_query(
+                delete_mutation, variables, "delete", f"Article ID {article_id}"
+            )
 
             if result and "removePost" in result and result["removePost"]["post"]:
                 # Successful deletion
                 self.error_handler.log_success(
                     "hashnode", f"Article ID {article_id}", "deleted", article_id
                 )
-                return True
+                return DeleteResult(success=True)
             else:
                 # Deletion failed
                 self.error_handler.log_api_error(
@@ -754,14 +759,17 @@ class HashnodeClient(PlatformClient):
                     "hashnode",
                     f"Article ID {article_id}",
                     "delete",
-                    {"response": result}
+                    {"response": result},
                 )
-                return False
+                return DeleteResult(success=False)
 
         except TransportError as e:
             # Handle permission errors specifically
             error_str = str(e)
-            if "does not have the minimum required role" in error_str or "FORBIDDEN" in error_str:
+            if (
+                "does not have the minimum required role" in error_str
+                or "FORBIDDEN" in error_str
+            ):
                 # Extract publication info if available
                 if "minRequiredRole" in error_str and "actualRole" in error_str:
                     self.logging.warning(
@@ -775,8 +783,8 @@ class HashnodeClient(PlatformClient):
                         f"⚠️  Cannot delete article {article_id} from Hashnode: "
                         f"Insufficient permissions. You may not have admin access to this publication."
                     )
-                # Return True to indicate we "handled" this gracefully (not a system error)
-                return True
+                # Return as already deleted (skip) since we can't delete due to permissions
+                return DeleteResult(success=False, already_deleted=True)
             else:
                 # Other transport errors - re-raise for normal handling
                 raise
@@ -787,4 +795,4 @@ class HashnodeClient(PlatformClient):
             self.error_handler.log_api_error(
                 e, "hashnode", f"Article ID {article_id}", "delete"
             )
-            return False
+            return DeleteResult(success=False)

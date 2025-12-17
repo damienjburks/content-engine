@@ -37,7 +37,7 @@ class PublicationManager:
         self.error_handler = ErrorHandler(self.logger)
 
         # Log initialization
-        self.logger.info(
+        self.logger.debug(
             f"PublicationManager initialized with {len(platform_clients)} platforms: {list(platform_clients.keys())}"
         )
 
@@ -60,14 +60,14 @@ class PublicationManager:
         """
         results = []
 
-        self.logger.info(
+        self.logger.debug(
             f"Starting publication of '{post_content.title}' to {len(self.platform_clients)} platforms"
         )
 
         # Requirement 5.3: Iterate through all configured platform clients
         for platform_name, client in self.platform_clients.items():
             try:
-                self.logger.info(f"Publishing to {platform_name}...")
+                self.logger.debug(f"Publishing to {platform_name}...")
                 result = self._publish_to_platform(post_content, platform_name, client)
                 results.append(result)
 
@@ -430,7 +430,7 @@ class PublicationManager:
                 # Try to get articles to test the connection
                 client.get_articles()
                 validation_results[platform_name] = True
-                self.logger.info(
+                self.logger.debug(
                     f"Platform client {platform_name} validated successfully"
                 )
             except AuthenticationError as e:

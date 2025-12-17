@@ -22,6 +22,7 @@ from src.utils.error_handler import (
     RateLimitError,
     APIError,
 )
+from src.models.delete_result import DeleteResult
 
 logging.basicConfig(level=logging.INFO)
 
@@ -348,7 +349,8 @@ class DevToClient(PlatformClient):
             self.error_handler.log_api_error(e, "devto", title, "find_article_by_title")
             return (None, None)
 
-    def delete_article(self, article_id: str) -> bool:
+    @with_retry_and_rate_limiting(max_retries=3, base_delay=2.0)
+    def delete_article(self, article_id: str) -> DeleteResult:
         """
         Delete an article from dev.to.
 
@@ -356,34 +358,40 @@ class DevToClient(PlatformClient):
             article_id: The ID of the article to delete
 
         Returns:
-            True if deletion was successful, False otherwise
+            DeleteResult indicating success, failure, or already deleted
         """
         try:
             url = f"{ARTICLES_URL}/articles/{article_id}"
             headers = self._generate_authenticated_header()
 
-            response = requests.delete(url, headers=headers)
+            response = requests.delete(url, headers=headers, timeout=30)
 
             if response.status_code == 204:
                 # 204 No Content indicates successful deletion
                 self.error_handler.log_success(
                     "devto", f"Article ID {article_id}", "deleted", article_id
                 )
-                return True
+                return DeleteResult(success=True)
             elif response.status_code == 404:
-                # Article not found
-                self.logging.warning(f"Article {article_id} not found on dev.to for deletion")
-                return False
-            else:
-                # Other error
-                self.error_handler.log_api_error(
-                    ValueError(f"Delete failed with status {response.status_code}"),
-                    "devto", 
-                    f"Article ID {article_id}", 
-                    "delete",
-                    {"status_code": response.status_code, "response": response.text}
+                # Article not found - already deleted
+                self.logging.debug(
+                    f"Article {article_id} already deleted from dev.to"
                 )
-                return False
+                return DeleteResult(success=False, already_deleted=True)
+            elif response.status_code == 429:
+                # Rate limiting - let the decorator handle retries
+                raise RateLimitError(
+                    f"Rate limit exceeded when deleting article {article_id}",
+                    platform="devto",
+                    article_title=f"Article ID {article_id}",
+                    retry_after=response.headers.get("Retry-After"),
+                )
+            else:
+                # Use the standard error handler for other HTTP errors
+                handle_api_response(
+                    response, "devto", "delete", f"Article ID {article_id}"
+                )
+                return DeleteResult(success=False)
 
         except (AuthenticationError, RateLimitError, APIError):
             # Re-raise our custom exceptions
@@ -392,7 +400,7 @@ class DevToClient(PlatformClient):
             self.error_handler.log_api_error(
                 e, "devto", f"Article ID {article_id}", "delete"
             )
-            return False
+            return DeleteResult(success=False)
 
     def _generate_authenticated_header(self):
         """
