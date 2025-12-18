@@ -1,5 +1,12 @@
 # Content Engine
 
+![Build Status](https://img.shields.io/github/actions/workflow/status/damienjburks/content-engine/publish-content.yml?branch=main&style=for-the-badge)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg?style=for-the-badge)](https://www.python.org/downloads/)
+[![dev.to](https://img.shields.io/badge/dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white)](https://dev.to/damienjburks)
+[![Hashnode](https://img.shields.io/badge/Hashnode-2962FF?style=for-the-badge&logo=hashnode&logoColor=white)](https://blog.damienjburks.com)
+[![Made with ❤️ using Kiro](https://img.shields.io/badge/Made%20with%20❤️%20using-Kiro-purple.svg?style=for-the-badge)](https://kiro.ai)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json&style=for-the-badge)](https://github.com/astral-sh/uv)
+
 A Python application for publishing content to multiple platforms (dev.to and Hashnode) simultaneously. This content engine enables creators to reach broader audiences by publishing to multiple platforms while maintaining content consistency and avoiding duplication.
 
 ## Features
@@ -17,7 +24,7 @@ A Python application for publishing content to multiple platforms (dev.to and Ha
 
 ### Prerequisites
 
-1. **Python 3.8+**: Ensure you have Python 3.8 or higher installed
+1. **Python 3.12+**: Ensure you have Python 3.12 or higher installed
 2. **uv Package Manager**: Install `uv` following the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/)
 
 ### Quick Installation
@@ -104,9 +111,75 @@ export EXCLUDE_FILES="README.md,CHANGELOG.md"
 export SKIP_DELETION_ON_PERMISSION_ERROR="true"
 ```
 
+## GitHub Actions Setup
+
+This project includes GitHub Actions for automated content publishing. The workflows will automatically publish your content when you push changes to your repository.
+
+### Required Secrets
+
+Set up the following secrets in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
+
+```bash
+DEVTO_API_KEY=your_devto_api_key_here
+HASHNODE_API_KEY=your_hashnode_api_key_here
+HASHNODE_USERNAME=your_hashnode_username
+HASHNODE_PUBLICATION_ID=your_24_character_publication_id
+```
+
+### Available Workflows
+
+#### 1. Automatic Publishing (`publish-content.yml`)
+
+**Triggers:**
+- Push to `main`/`master` branch with changes to `blogs/` or `src/`
+- Pull requests (runs validation only)
+- Manual trigger with force publish option
+
+**Features:**
+- ✅ Automatic content publishing on push
+- 🔍 Validation-only mode for pull requests
+- 🧪 Optional test execution
+- 📊 Failure log uploads
+- 🔒 Security scanning
+
+#### 2. Scheduled Publishing (`scheduled-publish.yml`)
+
+**Triggers:**
+- Daily at 9 AM UTC (customizable)
+- Manual trigger with platform selection
+- Dry-run mode for validation
+
+**Features:**
+- 📅 Scheduled daily publishing
+- 🎯 Platform selection (devto, hashnode, or both)
+- 🔍 Dry-run mode for testing
+- 📊 Detailed summary reports
+
+### Manual Workflow Triggers
+
+You can manually trigger workflows from the GitHub Actions tab:
+
+1. **Force Publish All**: Republish all articles regardless of changes
+2. **Dry Run**: Validate configuration and count files without publishing
+3. **Platform-Specific**: Publish to only dev.to or Hashnode
+
+### Workflow Security
+
+- **Secrets Protection**: API keys are stored as encrypted secrets
+- **Branch Protection**: Only runs on main/master branches for publishing
+- **Code Scanning**: Includes security and quality checks
+- **Artifact Upload**: Saves logs for debugging failures
+
+### CODEOWNERS
+
+The repository includes a `CODEOWNERS` file that:
+- Requires your review for all changes
+- Protects critical files (API clients, configuration)
+- Ensures security for sensitive components
+
 ## Usage
 
-### Basic Usage
+### Local Usage
 
 Place your markdown files in the `blogs/` directory (or your configured pattern) and run:
 

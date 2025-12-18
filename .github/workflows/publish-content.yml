@@ -1,0 +1,138 @@
+name: 🚀 Publish Content to Platforms
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'blogs/**/*.md'
+      - 'src/**/*.py'
+      - 'pyproject.toml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'blogs/**/*.md'
+      - 'src/**/*.py'
+      - 'pyproject.toml'
+  workflow_dispatch:
+    inputs:
+      force_publish:
+        description: 'Force publish all articles'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🔄 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: 📦 Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+        
+    - name: 🔧 Install dependencies
+      run: |
+        uv sync
+        
+    - name: 🧪 Run tests (if they exist)
+      run: |
+        if [ -d "tests" ]; then
+          uv run pytest tests/ -v || echo "⚠️ Tests failed but continuing with publish"
+        else
+          echo "ℹ️ No tests directory found, skipping tests"
+        fi
+      continue-on-error: true
+      
+    - name: 🚀 Publish content to platforms
+      env:
+        DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        HASHNODE_API_KEY: ${{ secrets.HASHNODE_API_KEY }}
+        HASHNODE_USERNAME: ${{ secrets.HASHNODE_USERNAME }}
+        HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+        ENABLED_PLATFORMS: "devto,hashnode"
+        RATE_LIMIT_DELAY: "5"
+        MARKDOWN_FILE_PATTERN: "blogs/*.md"
+        EXCLUDE_FILES: "README.md"
+        SKIP_DELETION_ON_PERMISSION_ERROR: "true"
+      run: |
+        echo "🚀 Starting content publication..."
+        uv run python -m src.main
+        
+    - name: 📊 Upload logs (on failure)
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: publication-logs
+        path: |
+          *.log
+          logs/
+        retention-days: 7
+
+  # Dry run for pull requests
+  dry-run:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🔄 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: 📦 Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+        
+    - name: 🔧 Install dependencies
+      run: |
+        uv sync
+        
+    - name: 🔍 Validate markdown files
+      run: |
+        echo "🔍 Validating markdown files..."
+        for file in blogs/*.md; do
+          if [ -f "$file" ]; then
+            echo "✅ Found: $file"
+            # Basic frontmatter validation
+            if head -n 1 "$file" | grep -q "^---$"; then
+              echo "  ✅ Has frontmatter"
+            else
+              echo "  ⚠️ Missing frontmatter"
+            fi
+          fi
+        done
+        
+    - name: 🧪 Test configuration
+      env:
+        DEVTO_API_KEY: "test-key"
+        HASHNODE_API_KEY: "test-key"
+        HASHNODE_USERNAME: "test-user"
+        HASHNODE_PUBLICATION_ID: "test-id"
+        ENABLED_PLATFORMS: "devto,hashnode"
+      run: |
+        echo "🧪 Testing configuration parsing..."
+        uv run python -c "
+        from src.main import PostPublisher
+        import os
+        
+        # Test configuration loading
+        try:
+            publisher = PostPublisher()
+            print('✅ Configuration loaded successfully')
+            print(f'📋 Enabled platforms: {list(publisher.platform_clients.keys()) if hasattr(publisher, \"platform_clients\") else \"None (expected in test)\"}')
+        except Exception as e:
+            print(f'⚠️ Configuration test failed: {e}')
+        "

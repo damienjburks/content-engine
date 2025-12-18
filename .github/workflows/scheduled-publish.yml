@@ -1,0 +1,88 @@
+name: 📅 Scheduled Content Publishing
+
+on:
+  schedule:
+    # Run every day at 9 AM UTC (adjust timezone as needed)
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Platforms to publish to (comma-separated)'
+        required: false
+        default: 'devto,hashnode'
+        type: string
+      dry_run:
+        description: 'Dry run mode (validate only, do not publish)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  scheduled-publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🔄 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: 📦 Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+        
+    - name: 🔧 Install dependencies
+      run: |
+        uv sync
+        
+    - name: 🚀 Publish content
+      if: ${{ !inputs.dry_run }}
+      env:
+        DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        HASHNODE_API_KEY: ${{ secrets.HASHNODE_API_KEY }}
+        HASHNODE_USERNAME: ${{ secrets.HASHNODE_USERNAME }}
+        HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+        ENABLED_PLATFORMS: ${{ inputs.platforms || 'devto,hashnode' }}
+        RATE_LIMIT_DELAY: "5"
+        MARKDOWN_FILE_PATTERN: "blogs/*.md"
+        EXCLUDE_FILES: "README.md"
+        SKIP_DELETION_ON_PERMISSION_ERROR: "true"
+      run: |
+        echo "🚀 Running scheduled content publication..."
+        echo "📋 Platforms: $ENABLED_PLATFORMS"
+        uv run python -m src.main
+        
+    - name: 🔍 Dry run validation
+      if: ${{ inputs.dry_run }}
+      env:
+        ENABLED_PLATFORMS: ${{ inputs.platforms || 'devto,hashnode' }}
+      run: |
+        echo "🔍 Running in dry-run mode..."
+        echo "📋 Would publish to platforms: $ENABLED_PLATFORMS"
+        
+        # Count markdown files
+        file_count=$(find blogs -name "*.md" -type f | wc -l)
+        echo "📄 Found $file_count markdown files to process"
+        
+        # List files that would be processed
+        echo "📋 Files that would be processed:"
+        find blogs -name "*.md" -type f | sort
+        
+    - name: 📊 Create summary
+      run: |
+        echo "## 📊 Publication Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Workflow**: Scheduled Publishing" >> $GITHUB_STEP_SUMMARY
+        echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Platforms**: ${{ inputs.platforms || 'devto,hashnode' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Dry Run**: ${{ inputs.dry_run || 'false' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp**: $(date -u)" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ inputs.dry_run }}" = "true" ]; then
+          echo "- **Mode**: Validation Only" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- **Mode**: Full Publication" >> $GITHUB_STEP_SUMMARY
+        fi
