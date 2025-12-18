@@ -44,6 +44,11 @@ jobs:
         uv sync
         
     - name: 🧪 Run tests (if they exist)
+      env:
+        DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        HASHNODE_API_KEY: ${{ secrets.HASHNODE_API_KEY }}
+        HASHNODE_USERNAME: ${{ secrets.HASHNODE_USERNAME }}
+        HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
       run: |
         if [ -d "tests" ]; then
           uv run pytest tests/ -v || echo "⚠️ Tests failed but continuing with publish"
